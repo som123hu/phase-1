@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="MensStoreApp">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Men's Wear Store</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <!-- AngularJS 1.x -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <!-- Razorpay Checkout (optional: enable payment) -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <style>
+    /* Reel (header) smooth scroll area */
+    .reel::-webkit-scrollbar { height: 8px; }
+    .reel::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 9999px; }
+
+    /* Simple marquee-like infinite strip for brand badges */
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .marquee {
+      display: flex; gap: 2rem; width: 200%; animation: marquee 18s linear infinite;
+    }
+
+    /* Quick view modal bg blur */
+    .backdrop-blur { backdrop-filter: blur(6px); }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900" ng-controller="StoreCtrl as vm">
+  <!-- Top Bar -->
+  <header class="sticky top-0 z-40 bg-white/80 backdrop-blur border-b">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <i class="fa-solid fa-shirt text-xl"></i>
+        <h1 class="text-lg sm:text-2xl font-bold tracking-tight"> Men’s Wear</h1>
+      </div>
+
+      <!-- Search -->
+      <div class="hidden md:flex items-center gap-2 w-1/2">
+        <input type="text" ng-model="vm.query" placeholder="Search tees, shirts, shoes..." class="w-full rounded-full border px-4 py-2 focus:outline-none focus:ring" />
+        <button class="px-4 py-2 rounded-full bg-gray-900 text-white" ng-click="vm.clearSearch()">Clear</button>
+      </div>
+
+      <!-- Cart button -->
+      <button class="relative px-3 py-2 rounded-full bg-gray-900 text-white flex items-center gap-2"
+              ng-click="vm.toggleCartPanel()">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span>Cart</span>
+        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full grid place-items-center">{{ vm.cart.count() }}</span>
+      </button>
+    </div>
+
+    <!-- Reel section (hero) -->
+    <section class="border-t bg-gray-100">
+      <div class="max-w-7xl mx-auto px-4 py-4">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-base sm:text-lg font-semibold">Trending Reels</h2>
+          <div class="hidden sm:flex items-center gap-2 text-sm text-gray-500"><i class="fa-solid fa-circle-info"></i> swipe/scroll →</div>
+        </div>
+        <div class="relative">
+          <!-- Left/Right arrows (desktop) -->
+          <button class="hidden md:grid place-items-center absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow"
+                  ng-click="vm.scrollReel(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+          <div id="reel" class="reel flex gap-3 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2">
+            <div ng-repeat="r in vm.reels" class="min-w-[240px] sm:min-w-[320px] snap-start">
+              <div class="relative rounded-2xl overflow-hidden shadow bg-white">
+                <img ng-src="{{ r.thumb }}" alt="reel" class="w-full h-40 sm:h-56 object-cover" />
+                <div class="p-3">
+                  <p class="font-semibold text-sm line-clamp-1">{{ r.title }}</p>
+                  <div class="flex items-center justify-between text-xs text-gray-500 mt-1">
+                    <span><i class="fa-solid fa-eye"></i> {{ r.views | number }} views</span>
+                    <button class="underline" ng-click="vm.openReel(r)">Play</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="hidden md:grid place-items-center absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow"
+                  ng-click="vm.scrollReel(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+
+        <!-- Sliding brand badges (marquee) -->
+        <div class="overflow-hidden mt-4">
+          <div class="marquee select-none py-2 text-gray-700 font-medium">
+            <span class="px-3">NIKE</span>
+            <span class="px-3">ADIDAS</span>
+            <span class="px-3">PUMA</span>
+            <span class="px-3">LEVI'S</span>
+            <span class="px-3">H&M</span>
+            <span class="px-3">ZARA</span>
+            <span class="px-3">USPA</span>
+            <span class="px-3">UNDER ARMOUR</span>
+            <!-- duplicate to loop seamlessly -->
+            <span class="px-3">NIKE</span>
+            <span class="px-3">ADIDAS</span>
+            <span class="px-3">PUMA</span>
+            <span class="px-3">LEVI'S</span>
+            <span class="px-3">H&M</span>
+            <span class="px-3">ZARA</span>
+            <span class="px-3">USPA</span>
+            <span class="px-3">UNDER ARMOUR</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </header>
+
+  <!-- Main content -->
+  <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <!-- Filters -->
+    <aside class="lg:col-span-1 space-y-4">
+      <div class="p-4 bg-white rounded-2xl shadow">
+        <h3 class="font-semibold mb-3">Filters</h3>
+        <label class="block text-sm">Category</label>
+        <select class="w-full border rounded-lg px-3 py-2" ng-model="vm.filter.category">
+          <option value="">All</option>
+          <option value="T-Shirt">T-Shirt</option>
+          <option value="Shirt">Shirt</option>
+          <option value="Shoes">Shoes</option>
+          <option value="Jeans">Jeans</option>
+        </select>
+        <label class="block text-sm mt-3">Max price (₹)</label>
+        <input type="number" class="w-full border rounded-lg px-3 py-2" ng-model="vm.filter.maxPrice" placeholder="e.g. 1999" />
+        <button class="mt-4 w-full rounded-xl bg-gray-900 text-white py-2" ng-click="vm.resetFilters()">Reset</button>
+      </div>
+      <div class="p-4 bg-white rounded-2xl shadow">
+        <h3 class="font-semibold mb-2">Why shop with us?</h3>
+        <ul class="text-sm list-disc ml-5 space-y-1 text-gray-600">
+          <li>Quick View & Fast Cart</li>
+          <li>Secure Razorpay Payments</li>
+          <li>Free & Fast Returns</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Products Grid -->
+    <section class="lg:col-span-3">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-xl font-bold">Men's Collection</h2>
+        <div class="md:hidden w-1/2">
+          <input type="text" ng-model="vm.query" placeholder="Search products" class="w-full rounded-full border px-4 py-2" />
+        </div>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div ng-repeat="p in vm.products | filter:vm.productFilter | orderBy:'price'" class="bg-white rounded-2xl shadow group overflow-hidden">
+          <div class="relative">
+            <img ng-src="{{ p.image }}" loading="lazy" class="w-full h-44 md:h-52 object-cover" alt="{{ p.name }}" />
+            <button class="absolute top-2 right-2 bg-white/90 text-gray-900 rounded-full p-2 shadow" title="Quick View" ng-click="vm.openQuickView(p)">
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+          <div class="p-3">
+            <h3 class="font-semibold line-clamp-1">{{ p.name }}</h3>
+            <p class="text-xs text-gray-500">{{ p.category }}</p>
+            <div class="flex items-center justify-between mt-2">
+              <span class="font-bold">₹{{ p.price }}</span>
+              <button class="text-sm px-3 py-1 rounded-full bg-gray-900 text-white" ng-click="vm.cart.add(p)">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Slide-in Cart Panel -->
+  <div class="fixed inset-0 z-50" ng-class="{ 'pointer-events-auto': vm.cartOpen, 'pointer-events-none': !vm.cartOpen }">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur transition-opacity" ng-show="vm.cartOpen" ng-click="vm.toggleCartPanel()"></div>
+    <aside class="absolute right-0 top-0 h-full w-full sm:w-[420px] bg-white shadow-2xl p-4 flex flex-col transform transition-transform"
+           ng-style="{ transform: vm.cartOpen ? 'translateX(0)' : 'translateX(100%)' }">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold">Your Cart ({{ vm.cart.count() }})</h3>
+        <button class="text-gray-500" ng-click="vm.toggleCartPanel()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="flex-1 overflow-auto divide-y" ng-if="vm.cart.items.length">
+        <div class="py-3 flex items-center gap-3" ng-repeat="item in vm.cart.items">
+          <img ng-src="{{ item.image }}" class="w-16 h-16 object-cover rounded" />
+          <div class="flex-1">
+            <p class="font-medium line-clamp-1">{{ item.name }}</p>
+            <p class="text-xs text-gray-500">{{ item.category }}</p>
+            <div class="flex items-center gap-2 mt-1">
+              <button class="px-2 py-1 border rounded" ng-click="vm.cart.dec(item)">-</button>
+              <span>{{ item.qty }}</span>
+              <button class="px-2 py-1 border rounded" ng-click="vm.cart.inc(item)">+</button>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="font-semibold">₹{{ item.price * item.qty }}</p>
+            <button class="text-xs text-red-500 underline" ng-click="vm.cart.remove(item)">Remove</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-auto pt-4 border-t" ng-if="vm.cart.items.length">
+        <div class="flex items-center justify-between font-semibold">
+          <span>Total</span>
+          <span>₹{{ vm.cart.total() }}</span>
+        </div>
+        <button class="mt-3 w-full bg-gray-900 text-white py-2 rounded-xl" ng-click="vm.pay()">
+          <i class="fa-solid fa-indian-rupee-sign"></i> Pay with Razorpay
+        </button>
+      </div>
+
+      <div class="flex-1 grid place-items-center text-gray-500" ng-if="!vm.cart.items.length">
+        Cart is empty
+      </div>
+    </aside>
+  </div>
+
+  <!-- Quick View Modal -->
+  <div class="fixed inset-0 z-50" ng-show="vm.quick.open">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur" ng-click="vm.closeQuickView()"></div>
+    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] sm:w-[640px] bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2">
+        <img ng-src="{{ vm.quick.product.image }}" class="w-full h-64 object-cover" />
+        <div class="p-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold">{{ vm.quick.product.name }}</h3>
+            <button class="text-gray-500" ng-click="vm.closeQuickView()"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <p class="text-xs text-gray-500">{{ vm.quick.product.category }}</p>
+          <p class="mt-2 text-sm">{{ vm.quick.product.desc }}</p>
+          <div class="mt-4 flex items-center justify-between">
+            <span class="text-xl font-bold">₹{{ vm.quick.product.price }}</span>
+            <div class="flex items-center gap-2">
+              <button class="px-3 py-2 border rounded" ng-click="vm.quick.qty = Math.max(1, vm.quick.qty-1)">-</button>
+              <span>{{ vm.quick.qty }}</span>
+              <button class="px-3 py-2 border rounded" ng-click="vm.quick.qty = vm.quick.qty+1">+</button>
+            </div>
+          </div>
+          <button class="mt-4 w-full bg-gray-900 text-white py-2 rounded-xl" ng-click="vm.addFromQuick()">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reel Player Modal -->
+  <div class="fixed inset-0 z-50" ng-show="vm.reelPlayer.open">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur" ng-click="vm.closeReel()"></div>
+    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] sm:w-[420px] bg-black rounded-2xl overflow-hidden">
+      <div class="relative pt-[177.77%]"> <!-- 9:16 aspect -->
+        <iframe ng-src="{{ vm.reelPlayer.embed | trusted }}" class="absolute inset-0 w-full h-full" allowfullscreen></iframe>
+      </div>
+      <div class="p-3 bg-white flex items-center justify-between">
+        <div class="font-semibold line-clamp-1">{{ vm.reelPlayer.title }}</div>
+        <button class="text-gray-600" ng-click="vm.closeReel()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const app = angular.module('MensStoreApp', []);
+
+    // Allow iframe src binding
+    app.filter('trusted', ['$sce', function($sce) {
+      return function(url) { return $sce.trustAsResourceUrl(url); };
+    }]);
+
+    app.controller('StoreCtrl', ['$window', '$timeout', function($window, $timeout) {
+      const vm = this;
+
+      // --- SEARCH & FILTERS ---
+      vm.query = '';
+      vm.filter = { category: '', maxPrice: '' };
+      vm.clearSearch = () => vm.query = '';
+      vm.resetFilters = () => vm.filter = { category: '', maxPrice: '' };
+
+      vm.productFilter = function(p) {
+        const q = (vm.query || '').toLowerCase();
+        if (q && !(p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q))) return false;
+        if (vm.filter.category && p.category !== vm.filter.category) return false;
+        if (vm.filter.maxPrice && p.price > Number(vm.filter.maxPrice)) return false;
+        return true;
+      };
+
+      // --- DATA (demo) ---
+      vm.products = [
+  // --- T-Shirts ---
+  { id: 1, name: 'Classic Black Tee', category: 'T-Shirt', price: 699,
+    image: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=800&auto=format&fit=crop',
+    desc: 'Soft cotton crew neck t-shirt for everyday wear.' },
+  { id: 2, name: 'White Cotton Tee', category: 'T-Shirt', price: 599,
+    image: 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?q=80&w=800&auto=format&fit=crop',
+    desc: 'Lightweight breathable cotton with a classic cut.' },
+  { id: 3, name: 'Graphic Street Tee', category: 'T-Shirt', price: 899,
+    image: 'https://content.jdmagicbox.com/comp/kollam/p4/9999px474.x474.191119235146.m9p4/catalogue/what-u-want-mens-wear-koottikada-kollam-readymade-garment-wholesalers-3nchmcydzk.jpg',
+    desc: 'Bold print design for a streetwear look.' },
+
+  // --- Shirts ---
+  { id: 4, name: 'Slim Fit White Shirt', category: 'Shirt', price: 1199,
+    image: 'https://images.unsplash.com/photo-1520975624749-5f1d2b61b9ae?q=80&w=800&auto=format&fit=crop',
+    desc: 'Elegant white shirt, perfect for office & formal events.' },
+  { id: 5, name: 'Checked Casual Shirt', category: 'Shirt', price: 999,
+    image: 'https://images.unsplash.com/photo-1520975619010-8835f6b2e0ea?q=80&w=800&auto=format&fit=crop',
+    desc: 'Laid-back checks with roll-up sleeves.' },
+  { id: 6, name: 'Denim Blue Shirt', category: 'Shirt', price: 1399,
+    image: 'https://images.unsplash.com/photo-1617957741643-8f27d2f74c07?q=80&w=800&auto=format&fit=crop',
+    desc: 'Casual denim shirt with button-down styling.' },
+
+  // --- Jeans ---
+  { id: 7, name: 'Denim Jeans Navy', category: 'Jeans', price: 1499,
+    image: 'https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?q=80&w=800&auto=format&fit=crop',
+    desc: 'Stretchable slim denim with durable stitching.' },
+  { id: 8, name: 'Washed Blue Denim', category: 'Jeans', price: 1699,
+    image: 'https://images.unsplash.com/photo-1530983825165-9a9339c84eb2?q=80&w=800&auto=format&fit=crop',
+    desc: 'Vintage wash with tapered fit.' },
+  { id: 9, name: 'Black Skinny Jeans', category: 'Jeans', price: 1599,
+    image: 'https://images.unsplash.com/photo-1618354691373-d852e1e6c8a3?q=80&w=800&auto=format&fit=crop',
+    desc: 'Skinny fit with stretch for daily comfort.' },
+
+  // --- Shoes ---
+  { id: 10, name: 'Running Shoes Pro', category: 'Shoes', price: 2599,
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTLyy0SBSt9PBXTfbpyuDHFqL95-CVB3Vkg0xTm77G3V6ZKj9uhD7jNhzpgGR26s2HvGk&usqp=CAU',
+    desc: 'Lightweight breathable trainers built for speed.' },
+  { id: 11, name: 'High-Top Sneakers', category: 'Shoes', price: 2799,
+    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop',
+    desc: 'Iconic silhouette with cushioned sole.' },
+  { id: 12, name: 'Leather Formal Shoes', category: 'Shoes', price: 2999,
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8Pu6DWPsnJUfpxjWOrk7J9XVFSeci4X_i5Q&s',
+    desc: 'Classic lace-ups for formal events.' },
+
+  // --- Jackets & Hoodies ---
+  { id: 13, name: 'Bomber Jacket', category: 'Jacket', price: 3499,
+    image: 'https://images.unsplash.com/photo-1598970434795-0c54fe7c0648?q=80&w=800&auto=format&fit=crop',
+    desc: 'Trendy bomber with zip fastening and ribbed cuffs.' },
+  { id: 14, name: 'Black Hoodie', category: 'Hoodie', price: 1799,
+    image: 'https://images.unsplash.com/photo-1617957741634-96a2c9eb5b7b?q=80&w=800&auto=format&fit=crop',
+    desc: 'Soft fleece hoodie with kangaroo pocket.' },
+  { id: 15, name: 'Denim Jacket', category: 'Jacket', price: 2499,
+    image: 'https://images.unsplash.com/photo-1535295972055-1c762f4483e5?q=80&w=800&auto=format&fit=crop',
+    desc: 'Classic denim jacket with a rugged finish.' },
+
+  // --- Accessories ---
+  { id: 16, name: 'Leather Belt', category: 'Accessories', price: 899,
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPUjTMoA8PfFx8RpcZve3H4EEOMEcj_e8o1Q&s',
+    desc: 'Durable brown leather belt with metal buckle.' },
+  { id: 17, name: 'Wrist Watch', category: 'Accessories', price: 4999,
+    image:'https://cottonfolk.in/cdn/shop/files/23.png?v=1723200159&width=2048',
+    desc: 'Minimal stainless steel wrist watch.' },
+  { id: 18, name: 'Sunglasses', category: 'Accessories', price: 1299,
+    image: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=800&auto=format&fit=crop',
+    desc: 'UV-protected aviator sunglasses.' }
+];
+
+      vm.reels = [
+        { id: 'r1', title: 'Nike Air – On Foot', views: 128000, thumb: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1200&auto=format&fit=crop', embed: 'https://www.youtube.com/embed/VIDEO_ID_1' },
+        { id: 'r2', title: 'Streetwear Fit Check', views: 98000, thumb: 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?q=80&w=1200&auto=format&fit=crop', embed: 'https://www.youtube.com/embed/VIDEO_ID_2' },
+        { id: 'r3', title: 'Office Look Ideas', views: 45200, thumb: 'https://rukminim2.flixcart.com/image/514/616/xif0q/shirt/v/s/k/xxl-sugarcane-shirt-2004-black-parona-original-imahcfhugkf6tcq5.jpeg?q=90&crop=false', embed: 'https://www.youtube.com/embed/VIDEO_ID_3' },
+        { id: 'r4', title: 'Denim Care Tips', views: 38000, thumb: 'https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?q=80&w=1200&auto=format&fit=crop', embed: 'https://www.youtube.com/embed/VIDEO_ID_4' }
+      ];
+
+      // --- CART SERVICE (simple) ---
+      const persisted = JSON.parse(localStorage.getItem('mens_store_cart') || '[]');
+      vm.cart = {
+    
+        items: persisted,
+        save() { localStorage.setItem('mens_store_cart', JSON.stringify(this.items)); },
+        find(p) { return this.items.find(i => i.id === p.id); },
+        add(p, qty=1) {
+          const existing = this.find(p);
+          if (existing) existing.qty += qty; else this.items.push({ ...p, qty });
+          this.save();
+        },
+        inc(i) { i.qty++; this.save(); },
+        dec(i) { i.qty = Math.max(1, i.qty-1); this.save(); },
+        remove(i) { this.items = this.items.filter(x => x.id !== i.id); this.save(); },
+        clear() { this.items = []; this.save(); },
+        count() { return this.items.reduce((a,b)=>a+b.qty, 0); },
+        total() { return this.items.reduce((a,b)=>a + b.price*b.qty, 0); }
+      };
+
+      // --- QUICK VIEW ---
+      vm.quick = { open: false, product: {}, qty: 1 };
+      vm.openQuickView = (p) => { vm.quick = { open: true, product: p, qty: 1 }; };
+      vm.closeQuickView = () => vm.quick.open = false;
+      vm.addFromQuick = () => { vm.cart.add(vm.quick.product, vm.quick.qty); vm.closeQuickView(); vm.cartOpen = true; };
+
+      // --- CART PANEL ---
+      vm.cartOpen = false;
+      vm.toggleCartPanel = () => vm.cartOpen = !vm.cartOpen;
+
+      // --- REEL PLAYER ---
+      vm.reelPlayer = { open: false, title: '', embed: '' };
+      vm.openReel = (r) => { vm.reelPlayer = { open: true, title: r.title, embed: r.embed }; };
+      vm.closeReel = () => vm.reelPlayer.open = false;
+
+      // --- REEL SCROLLER ---
+      vm.scrollReel = (dir) => {
+        const el = document.getElementById('reel');
+        if (!el) return;
+        el.scrollBy({ left: dir * (el.clientWidth * 0.8), behavior: 'smooth' });
+      };
+
+      // --- PAYMENT (Razorpay) ---
+      vm.pay = function() {
+        const amount = vm.cart.total();
+        if (!amount) return alert('Your cart is empty.');
+        // NOTE: Replace with your own order creation on backend for production.
+        const options = {
+          key: 'rzp_test_1234567890abcdef', // TODO: replace with your Razorpay Key ID
+          amount: amount * 100, // in paise
+          currency: 'INR',
+          name: 'Gemen Store',
+          description: 'Men\'s Wear Order',
+          image: 'https://cdn-icons-png.flaticon.com/512/892/892458.png',
+          handler: function (response){
+            alert('Payment successful: ' + response.razorpay_payment_id);
+            vm.cart.clear();
+            vm.cartOpen = false;
+            // force digest after external callback
+            const scope = angular.element(document.body).scope();
+            scope.$apply();
+          },
+          prefill: { name: '', email: '', contact: '' },
+          theme: { color: '#111827' }
+        };
+        const rzp = new Razorpay(options);
+        rzp.open();
+      };
+
+      // Ensure UI updates when returning from Razorpay
+      $window.addEventListener('focus', () => { $timeout(()=>{}, 0); });
+    }]);
+  </script>
+</body>
+
+
+</html>

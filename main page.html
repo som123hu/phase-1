@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8" />
+  <title>TOMZOON</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-file-upload/4.0.11/jquery.uploadfile.min.js" integrity="sha512-uwNlWrX8+f31dKuSezJIHdwlROJWNkP6URRf+FSWkxSgrGRuiAreWzJLA2IpyRH9lN2H67IP5H4CxBcAshYGNw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+<marquee class="bg-pink-600 text-xl font-semibold ">  
+ Latest Trending Products In Minimal Range
+ 
+
+  Let's GO TO Shopping  
+</marquee>
+
+
+
+<body id="pageBody" class="transition-colors duration-300 bg-white text-black min-h-screen">
+
+
+  <!-- Navbar -->
+  <div class="w3-bar w3-blue w3-large  rounded-xl px-4">
+    <a href="" class="w3-bar-item w3-button w3-mobile"></a>
+    <a href="#" class="w3-bar-item w3-button w3-mobile font-cursive">Mens wear</a>
+
+    <a href="" class="w3-bar-item w3-button w3-mobile">Womens wear</a>
+    <body>
+      <a href="file:///C:/Users/Admin/Desktop/E-commerce/login.html"> <i class="fa-solid fa-circle-user text-4xl float-right gap-4"></i></a>
+     
+    </body>
+
+   <body class="w3-conatiner w3-light-grey">      
+  <div class="w3-dropdown-click"></div>
+  <button onclick="toggledropdown()" class="w3-class w3-button"></button>
+
+  <body class="w3-container w3-light-grey" style="padding-top: 50px;">
+  
+    <div class="w3-dropdown-click">
+      <button onclick="toggleDropdown()" class="w3-button w3-blue">
+        Account ▾
+      </button>
+  
+      <div id="accountDropdown" class="w3-dropdown-content w3-bar-block w3-border float-right w3-white" style="min-width:150px">
+        <a href="C:\Users\Admin\Desktop\E-commerce\login.html" class="w3-bar-item w3-button">Sign Up</a>
+        <a href="file:///C:/Users/Admin/Desktop/E-commerce/main%20page.html" class="w3-bar-item w3-button">Sign In</a>
+        <a href=""></a>
+      </div>
+    </div>
+  
+    <script>
+      function toggleDropdown() {
+        const dropdown = document.getElementById("accountDropdown");
+        dropdown.classList.toggle("w3-show");
+      }
+    </script>
+  </body>
+
+  <div id="accountDropdown" class="w3-dropdown-content w3-bar-block w3-border w3-white float-right" style="min-width:150px">
+    <a href="/signup" class="w3-bar-item w3-button">Sign Up</a>
+    <a href="/signin" class="w3-bar-item w3-button">Sign In</a>
+  </div>
+</div>
+  </div>
+
+  <!-- Content -->
+  <div id="content" class="flex flex-col items-center gap-4 mt-6 p-4 ">
+  
+    <!-- Animated Paragraph -->
+    <p class="opacity-0 animate-fade-in text-xl font-semibold text-white-500 transition-opacity duration-1000">
+      Welcome to our E-Commerce store! Enjoy exclusive deals.
+    </p>
+
+   
+  <script>
+    const body = document.getElementById("pageBody");
+
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      setDarkMode();
+    } else {
+      setLightMode();
+    }
+
+    function toggleMode() {
+      if (body.classList.contains("bg-gray-900")) {
+        setLightMode();
+        localStorage.setItem("theme", "light");
+      } else {
+        setDarkMode();
+        localStorage.setItem("theme", "dark");
+      }
+    }
+
+    function setDarkMode() {
+      body.classList.add("bg-gray-900", "text-white");
+      body.classList.remove("bg-white", "text-black");
+    }
+
+    function setLightMode() {
+      body.classList.add("bg-white", "text-black");
+      body.classList.remove("bg-gray-900", "text-white");
+    }
+  </script>
+
+</body>
+
+<style>
+    @keyframes slide {
+      0% { transform: translateX(0%); }
+      33% { transform: translateX(-100%); }
+      66% { transform: translateX(-80%); }
+    }
+    .carousel-track {
+      animation: slide 5s ease-in-out;
+    }
+</style>
+</head>
+
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+  <!-- Carousel Container -->
+  <div class="overflow-hidden w-[90%] md:w-[60%] h-64 rounded-xl shadow-lg">
+    <!-- Track (sliding wrapper) -->
+    <div class="flex w-[300%] carousel-track">
+      <!-- Image 1 -->
+      <img src="https://cdnimg.brunomarc.com/brunomarcs/image/article/20220818_79/grand-01-men-mesh-sneakers-with-pants-0sd.jpg" class="w-70 h-64 " />
+      <!-- Image 2 -->
+      <img src="https://m.media-amazon.com/images/I/61itk1uCjJL._UY900_.jpg"  class="w-55 h-64 " />
+      <!-- Image 3 -->
+      <img src="https://shopify-app-group-product.s3.amazonaws.com/1715086645152-8.jpg" class="w-64 h-64 "/>
+    </div>
+  </div>
+
+</body>
+
+<section class="text-center mt-10 px-4" data-aos="fade-up">
+  <h1 class="text-4xl font-bold mb-4">Discover the Best Deals</h1>
+  <p class="text-lg mb-6" data-aos="fade-up" data-aos-delay="200">
+    Up to 50% off on top categories!
+  </p>
+  <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition" data-aos="zoom-in" data-aos-delay="400">
+    <a href="file:///C:/Users/Admin/Desktop/E-commerce/mens%20wear%20shop.html"> Shop Now</a>
+  </button >
+</section>
+
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init({ duration: 1000 , once: true });
+</script>
+
+<body class="bg-gray-100">
+
+  <section class="py-10 px-4 max-w-7xl mx-auto" data-aos="fade-up">
+    <h2 class="text-3xl font-bold text-center mb-10">Featured Products</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+
+      <!-- Product Card 1 -->
+      <div class="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-lg transition" >
+        <img src="https://www.beatitude.in/cdn/shop/articles/DSC_2173_720x_dec1d27e-c2a7-4ce7-8b21-654c0ca12e43_1024x.webp?v=1675162397" class="w-full h-74 object-cover" alt="Product 1" />
+        <div class="p-4">
+          <h3 class="text-xl font-semibold mb-2">Stylish T-Shirt</h3>
+          <p class="text-gray-500 mb-3">₹499</p>
+          <button class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Add to Cart</button>
+        </div>
+      </div>
+
+      <!-- Product Card 2 -->
+      <div class="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-lg transition">
+        <img src="https://www.bullionknot.com/cdn/shop/files/1_3_500KB_8452aa5b-0aae-4aab-ad67-08fe2022fb4a.jpg?v=1752041301&width=1200" class="w-full h-18 object-cover" alt="Product 2" />
+        <div class="p-4">
+          <h3 class="text-xl font-semibold mb-2">Sport Shoes</h3>
+          <p class="text-gray-500 mb-3">₹1,299</p>
+          <button class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Add to Cart</button>
+        </div>
+      </div>
+
+      <!-- Product Card 3 -->
+      <div class="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-lg transition">
+        <img src="https://images.meesho.com/images/products/259347048/nzwfo_512.webp?width=512" class="w-65 h-65 object-cover" alt="Product 3" />
+        <div class="p-4">
+          <h3 class="text-xl font-semibold mb-2">Leather Backpack</h3>
+          <p class="text-gray-500 mb-3">₹999</p>
+          <button class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-transform duration-300">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+
+
+
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .marquee {
+    display: flex;
+    width: max-content;
+    animation: scroll 35s linear infinite;
+  }
+  @keyframes scroll {
+    from { transform: translateX(100%); }
+    to { transform: translateX(-100%); }
+  }
+</style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+<!-- Marquee Section -->
+<div class="overflow-hidden w-full bg-white py-6 shadow-lg">
+  <div class="marquee gap-8">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHrPUNZE8CEruOjqmbOclK8VXfygm0yztHKO2g7xryE4AzydBw69AXtiWqse12K-lm76g&usqp=CAU" class="h-40 w-auto rounded-xl shadow-md hover:scale-105 transition" />
+    <img src="https://armapparels.com.pk/cdn/shop/products/BlackBasicTee-01HS_1000x1000_a5554574-089d-4e45-bb53-ee9c07cf7e29.jpg?v=1752178547" class="h-40 w-auto rounded-xl shadow-md hover:scale-105 transition" />
+    <img src="https://i.etsystatic.com/33800644/r/il/cd8570/6162578433/il_fullxfull.6162578433_lhp5.jpg" class="h-40 w-auto rounded-xl shadow-md hover:scale-105 transition" />
+    <img src="https://www.rebelsport.com.au/on/demandware.static/-/Library-Sites-rebel-shared-library/default/dw442c6a22/category/mens/cards/250410-XPLP-Mens-Footwear-Sneakers-Category-Sportswear.jpg" class="h-40 w-auto rounded-xl shadow-md hover:scale-105 transition"/>
+    <img src="https://img4.dhresource.com/webp/m/0x0/f3/albu/jc/m/31/eef57379-9b94-44da-9fe6-c0d849017f13.jpg" class="h-40 w-auto rounded-xl shadow-md hover:scale-105 transition"/>    
+</div>
+</div>
+
+</body>
+
+
+
+
+
+  <!-- Hero Section with Overlay -->
+  <section class="relative w-full h-[60vh] overflow-hidden">
+    <img src="https://byshree.com/cdn/shop/articles/6-different-styles.jpg?v=1687584521&width=2048" alt="Hero" class="w-75% h-75% " />
+    <div class="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center text-white">
+      <h2 class="text-3xl sm:text-5xl font-bold mb-4">Discover the Latest Women's Wear</h2>
+      <button class="px-6 py-3 rounded-full bg-white text-gray-900 font-semibold shadow-lg hover:bg-gray-200 transition">Shop Now</button>
+    </div>
+  </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!------<body class="bg-gray-100">
+
+  <section class="py-10 px-4 max-w-7xl mx-auto" data-aos="fade-up">
+    <h2 class="text-3xl font-bold text-center mb-10">Featured Products</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+
+      <! Product Card 1 >
+      <div class="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-lg transition" >
+        <img src="C:\Users\Admin\Desktop\E-commerce\er.jpg" class="w-full h-74 object-cover" alt="Product 1" />
+        <div class="p-4">
+          <h3 class="text-xl font-semibold mb-2">Stylish T-Shirt</h3>
+          <p class="text-gray-500 mb-3">₹499</p>
+          <button class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Add to Cart</button>
+        </div>
+      </div>
+
+      <! Product Card 2 >
+      <div class="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-lg transition">
+        <img sass="text-xl font-semibold mb-2">Sport Shoes</h3>
+          <p clarc="C:\Users\Admin\Desktop\E-commerce\04.jpg" class="w-full h-18 object-cover" alt="Product 2" />
+        <div class="p-4">
+          <h3 clss="text-gray-500 mb-3">₹1,299</p>
+          <button class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Add to Cart</button>
+        </div>
+      </div>
+
+      <!Product Card 3 >
+      <div class="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-lg transition">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqYXsjT4BAOR1y0HmjW-ILNYOtTwfeSGzTaBUoJb4UVmtK4lLEnrYuy7Uy1Sx7Y3oeqVs&usqp=CAU" class="w-65 h-75 object-cover" alt="Product 3" />
+        <div class="p-4">
+          <h3 class="text-xl font-semibold mb-2">Leather Backpack</h3>
+          <p class="text-gray-500 mb-3">₹999</p>
+          <button class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>--------->
+
+
+
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .marquee {
+    display: flex;
+    width: max-content;
+    animation: scroll 35s linear infinite;
+  }
+  @keyframes scroll {
+    from { transform: translateX(100%); }
+    to { transform: translateX(-100%); }
+  }
+</style>
+
+
+
+<body>
+
+
+
+<section class="bg-blue-500 py-10 px-4">
+    <h2 class="text-2xl font-bold text-center mb-6"></h2>
+    
+    <div class="flex justify-center gap-6 overflow-x-auto pb-4 snap-x snap-mandatory no-scrollbar">
+      
+      <!-- Reel 1 (YouTube Video) -->
+      <div class="bg-white rounded-2xl shadow-md w-40 h-72 flex-shrink-0 snap-center overflow-hidden hover:scale-105 transition-transform">
+        <iframe width="100%" height="100%" 
+                src="https://www.youtube.com/embed/A5eurvVEPGU?autoplay=1&mute=1&loop=1&playlist=A5eurvVEPGU" 
+                title="Best Sneaker Reel" frameborder="0" 
+                allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+        <div class="p-2 bg-black bg-opacity-50 text-white text-sm text-center">Best Sneaker</div>
+      </div>
+  
+      <!-- Reel 2 (YouTube Shorts) -->
+      <div class="bg-white rounded-2xl shadow-md w-40 h-72 flex-shrink-0 snap-center overflow-hidden hover:scale-105 transition-transform">
+        <iframe width="100%" height="100%" 
+                src="" 
+                title="Adidas Boost Reel" frameborder="0" 
+                allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+        <div class="p-2 bg-black bg-opacity-50 text-white text-sm text-center">Adidas Boost</div>
+      </div>
+  
+      <!-- Reel 3 (YouTube Shorts) -->
+      <div class="bg-white rounded-2xl shadow-md w-40 h-72 flex-shrink-0 snap-center overflow-hidden hover:scale-105 transition-transform">
+        <iframe width="100%" height="100%" 
+                src="https://www.youtube.com/embed/ndRF_T21RVs?autoplay=1&mute=1&loop=1&playlist=ndRF_T21RVs" 
+                title="Puma Runner Reel" frameborder="0" 
+                allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+        <div class="p-2 bg-black bg-opacity-50 text-white text-sm text-center">Puma Runner</div>
+      </div>
+ 
+
+    </div>
+
+
+
+</section>
+</body>
+
+
+
+
+
+
+
+
+
+
+<footer class="bg-gray-900 text-gray-300 py-8">
+  <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+
+    <!-- Company Info -->
+    <div>
+      <h2 class="text-lg font-bold text-white mb-4">MyShop</h2>
+      <p class="text-sm">
+        Your one-stop destination for fashion, electronics, and more.
+        Quality products at unbeatable prices.
+      </p>
+    </div>
+
+    <!-- Quick Links -->
+    <div>
+      <h2 class="text-lg font-bold text-white mb-4">Quick Links</h2>
+      <ul class="space-y-2">
+        <li><a href="#" class="hover:text-white">Home</a></li>
+        <li><a href="#" class="hover:text-white">Shop</a></li>
+        <li><a href="#" class="hover:text-white">About</a></li>
+        <li><a href="#" class="hover:text-white">Contact</a></li>
+      </ul>
+    </div>
+
+    <!-- Contact Info -->
+    <div>
+      <h2 class="text-lg font-bold text-white mb-4">Contact Us</h2>
+      <ul class="space-y-2 text-sm">
+        <li>Email: support@myshop.com</li>
+        <li>Phone: +91-9876543210</li>
+        <li>Address: 123, MG Road, New Delhi</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="border-t border-gray-700 mt-8 pt-4 text-center text-sm">
+    © 2025 MyShop. All rights reserved.
+  </div>
+</footer>
+
+<h1 class=" font-semibold text-green-500 text-center"> Designed and Developed By Mr.Somesh Sarwariya </h1>
+
+</html>
